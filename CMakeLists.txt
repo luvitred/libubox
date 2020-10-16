@@ -22,10 +22,12 @@ IF(JSONC_FOUND)
 ENDIF()
 
 SET(SOURCES avl.c avl-cmp.c blob.c blobmsg.c uloop.c usock.c ustream.c ustream-fd.c vlist.c utils.c safe_list.c runqueue.c md5.c kvlist.c ulog.c base64.c)
+FILE(GLOB headers *.h)
 
 ADD_LIBRARY(ubox SHARED ${SOURCES})
 ADD_LIBRARY(ubox-static STATIC ${SOURCES})
 SET_TARGET_PROPERTIES(ubox-static PROPERTIES OUTPUT_NAME ubox)
+SET_TARGET_PROPERTIES(ubox-static PROPERTIES PUBLIC_HEADER "${headers}")
 
 SET(LIBS)
 CHECK_FUNCTION_EXISTS(clock_gettime HAVE_GETTIME)
@@ -36,13 +38,13 @@ IF(NOT HAVE_GETTIME)
 	ENDIF()
 ENDIF()
 
-FILE(GLOB headers *.h)
 INSTALL(FILES ${headers}
 	DESTINATION include/libubox
 )
 INSTALL(TARGETS ubox ubox-static
 	ARCHIVE DESTINATION lib
 	LIBRARY DESTINATION lib
+	PUBLIC_HEADER DESTINATION include/libubox
 )
 
 ADD_SUBDIRECTORY(lua)
